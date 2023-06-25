@@ -2,25 +2,28 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const helmet = require('helmet')
-require('dotenv').config({ path: './config/local.env' })
-
+const morgan = require('morgan')
+require('dotenv').config({ path: './config/.env.local' })
+const firebase = require('./config/firebase')
+// create server instance
 const server = express()
+server.locals.firebase = firebase
 // middleware
 server.use(express.json())
 server.use(helmet())
 server.use(cors())
-
-// routers
-
-
-
-// server start
-const port = process.env.EXPRESS_PORT || 5000
-const CONNECT_MONGO_URI = process.env.CONNECT_MONGO_URI || ''
-
-mongoose.connect(CONNECT_MONGO_URI)
+server.use(morgan('tiny'))
+// routes
+server.use('/api', require('./routes/index'))
+// server listening
+mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        console.log('connected to db')
-        server.listen(port, () => console.log(`server running on port ${port}`))
+        console.log('Connected to MongoDB')
+        server.listen(process.env.PORT, () => {
+            console.log(`Server listening on port ${process.env.PORT}`)
+        })
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+        console.log(err)
+    })
+

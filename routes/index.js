@@ -1,7 +1,8 @@
 const express = require('express')
-const router = express.Router()
+const indexRouter = express.Router()
 
-router.route("/book", require('./book.router'))
+indexRouter.use('/user', require('./user.router'))
 
 
-module.exports = router
+
+module.exports = indexRouter
